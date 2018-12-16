@@ -1,6 +1,7 @@
 import Vapor
 import FluentPostgreSQL
 import Authentication
+import WS
 
 /// Called before your application initializes.
 public func configure(_ config: inout Config, _ env: inout Environment, _ services: inout Services) throws {
@@ -39,4 +40,9 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     migrations.add(migration: InitialFilling.self, database: .psql)
     services.register(migrations)
     
+    // Register WebSocket Handler
+    let tokenAuthMiddleware = User.tokenAuthMiddleware()
+    let guardAuthMiddleware = User.guardAuthMiddleware()
+    let ws = WS(at: "v1", "ws", protectedBy: [tokenAuthMiddleware, guardAuthMiddleware])
+    services.register(ws, as: WS.self)
 }
