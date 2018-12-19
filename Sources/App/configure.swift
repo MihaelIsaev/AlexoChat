@@ -41,8 +41,6 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     services.register(migrations)
     
     // Register WebSocket Handler
-    let tokenAuthMiddleware = User.tokenAuthMiddleware()
-    let guardAuthMiddleware = User.guardAuthMiddleware()
-    let ws = WS(at: "v1", "ws", protectedBy: [tokenAuthMiddleware, guardAuthMiddleware])
-    services.register(ws, as: WS.self)
+    let ws = WS(at: "v1", "ws")
+    services.register(ws, as: WebSocketServer.self)
 }
