@@ -41,6 +41,23 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     services.register(migrations)
     
     // Register WebSocket Handler
-    let ws = WS(at: "v1", "ws")
+    let tokenAuthMiddleware = User.tokenAuthMiddleware()
+    let guardAuthMiddleware = User.guardAuthMiddleware()
+    let ws = WS(at: "v1", "ws", protectedBy: [/*tokenAuthMiddleware, guardAuthMiddleware*/])
+    ws.onOpen = { client in
+        print("onOpen \(client.uid)")
+    }
+    ws.onText = { client, text in
+        print("onText: \(text)")
+    }
+    ws.onBinary = { client, data in
+        print("onBinary")
+    }
+    ws.onError = { client, error in
+        print("onError: \(error)")
+    }
+    ws.onClose = {
+        print("onClose")
+    }
     services.register(ws, as: WebSocketServer.self)
 }
