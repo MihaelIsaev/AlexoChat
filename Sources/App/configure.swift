@@ -43,7 +43,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     // Register WebSocket Handler
     let tokenAuthMiddleware = User.tokenAuthMiddleware()
     let guardAuthMiddleware = User.guardAuthMiddleware()
-    let ws = WS(at: "v1", "ws", protectedBy: [/*tokenAuthMiddleware, guardAuthMiddleware*/])
+    let ws = WS(at: "ws", protectedBy: [tokenAuthMiddleware, guardAuthMiddleware])
     ws.onOpen = { client in
         print("onOpen \(client.uid)")
     }
