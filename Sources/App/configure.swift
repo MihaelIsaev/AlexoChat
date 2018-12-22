@@ -43,21 +43,32 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     // Register WebSocket Handler
     let tokenAuthMiddleware = User.tokenAuthMiddleware()
     let guardAuthMiddleware = User.guardAuthMiddleware()
-    let ws = WS(at: "ws", protectedBy: [tokenAuthMiddleware, guardAuthMiddleware])
-    ws.onOpen = { client in
-        print("onOpen \(client.uid)")
-    }
-    ws.onText = { client, text in
-        print("onText: \(text)")
-    }
-    ws.onBinary = { client, data in
-        print("onBinary")
-    }
-    ws.onError = { client, error in
-        print("onError: \(error)")
-    }
-    ws.onClose = {
-        print("onClose")
-    }
+    let ws = WS(at: "ws", protectedBy: [/*tokenAuthMiddleware, guardAuthMiddleware*/], delegate: WSController())
+    ws.logger.level = .info
+//    let wsObserver = ws.pure()
+//    wsObserver.onOpen = { client in
+//        print("onOpen \(client.uid)")
+//    }
+//    wsObserver.onText = { client, text in
+//        print("onText: \(text)")
+//    }
+//    wsObserver.onBinary = { client, data in
+//
+//    }
+//    wsObserver.onError = { client, error in
+//        print("onError: \(error)")
+//    }
+//    wsObserver.onClose = {
+//        print("onClose")
+//    }
     services.register(ws, as: WebSocketServer.self)
+}
+
+struct Some: Middleware {
+    func respond(to request: Request, chainingTo next: Responder) throws -> EventLoopFuture<Response> {
+        var h = request.http.headers
+        h.add(name: "ccc", value: "dddd")
+        request.http.headers = h
+        return try next.respond(to: request)
+    }
 }
