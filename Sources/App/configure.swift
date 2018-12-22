@@ -43,8 +43,8 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     // Register WebSocket Handler
     let tokenAuthMiddleware = User.tokenAuthMiddleware()
     let guardAuthMiddleware = User.guardAuthMiddleware()
-    let ws = WS(at: "ws", protectedBy: [/*tokenAuthMiddleware, guardAuthMiddleware*/], delegate: WSController())
-    ws.logger.level = .info
+    let ws = WS(at: "ws", protectedBy: [Some()/*tokenAuthMiddleware, guardAuthMiddleware*/], delegate: WSController())
+    ws.logger.level = .debug
 //    let wsObserver = ws.pure()
 //    wsObserver.onOpen = { client in
 //        print("onOpen \(client.uid)")
@@ -67,7 +67,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
 struct Some: Middleware {
     func respond(to request: Request, chainingTo next: Responder) throws -> EventLoopFuture<Response> {
         var h = request.http.headers
-        h.add(name: "ccc", value: "dddd")
+        h.add(name: "Authorization", value: "Bearer " + UUID().uuidString)
         request.http.headers = h
         return try next.respond(to: request)
     }
