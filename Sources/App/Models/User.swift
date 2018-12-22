@@ -9,15 +9,15 @@ final class User: Content {
     
     var id: UUID?
     var email, password, nickname: String
-    var admin: Bool = false
+    var isAdmin: Bool = false
     var createdAt, updatedAt, deletedAt: Date?
     
-    init(id: User.ID? = nil, email: String, password: String, nickname: String, admin: Bool) {
+    init(id: User.ID? = nil, email: String, password: String, nickname: String, isAdmin: Bool) {
         self.id = id
         self.email = email
         self.password = password
         self.nickname = nickname
-        self.admin = admin
+        self.isAdmin = isAdmin
     }
 }
 
