@@ -2,13 +2,24 @@ import Foundation
 import Vapor
 import WS
 
-public struct MessagePayload: Codable {
-    public var userId: UUID
-    public var text: String
+struct MessagePayload: Codable {
+    enum MessageType: String, Codable {
+        case direct, group
+    }
+    var type: MessageType
+    var fromUser: User.Public
+    var room: Room
+    var text: String
+    init (type: MessageType, fromUser: User.Public, room: Room, text: String) {
+        self.type = type
+        self.fromUser = fromUser
+        self.room = room
+        self.text = text
+    }
 }
 
 extension WSEventIdentifier {
-    public static var message: WSEventIdentifier<MessagePayload> { return .init("message") }
+    static var message: WSEventIdentifier<MessagePayload> { return .init("message") }
 }
 
 extension WSController {

@@ -22,6 +22,7 @@ final class User: Content {
 }
 
 extension User: PostgreSQLUUIDModel {}
+extension User: Parameter {}
 extension User: Migration {
     static func prepare(on connection: PostgreSQLConnection) -> Future<Void> {
         return Database.create(self, on: connection) { builder in

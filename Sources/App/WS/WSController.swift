@@ -12,8 +12,11 @@ class WSController: WSBindController {
     override init() {
         super.init()
         bind(.message, message)
+        bind(.typing, typing)
     }
     
-    override func onOpen(_ client: WSClient) {}
+    override func onOpen(_ client: WSClient) {
+        
+    }
     override func onClose(_ client: WSClient) {}
 }
