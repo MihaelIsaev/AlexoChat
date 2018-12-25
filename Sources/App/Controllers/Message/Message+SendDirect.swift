@@ -19,7 +19,7 @@ extension MessageController {
             let fq = FQL()
             fq.select(all: Room.self)
             fq.from(Room.self)
-            fq.where(\Room.type == .direct && \Room.members ~~ [userId] && \Room.members ~~ [payload.toUserId]) //FIXME: ~~ operator doesn't work, should use SwifQL lib instead
+            fq.where(\Room.type == .direct && FQWhere("members @> ARRAY['\(user.id!.uuidString)']::uuid[]") && FQWhere("members @> ARRAY['\(payload.toUserId.uuidString)']::uuid[]")) //FIXME: ~~ operator doesn't work, should use SwifQL lib instead
             return try fq.execute(on: conn, andDecode: Room.self).flatMap { rooms in
                 guard rooms.count <= 1 else {
                     throw Abort(.internalServerError, reason: "Unable to create direct room for that message cause there are more that one rooms in the database already")

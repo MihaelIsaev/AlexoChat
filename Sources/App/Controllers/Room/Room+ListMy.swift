@@ -10,7 +10,7 @@ extension RoomController {
             let fq = FQL()
             fq.select(all: Room.self)
             fq.from(Room.self)
-            fq.where(\Room.deletedAt == nil && \Room.members ~~ [userId]) //FIXME: ~~ operator doesn't work, should use SwifQL lib instead
+            fq.where(\Room.deletedAt == nil && FQWhere("members @> ARRAY['\(userId.uuidString)']::uuid[]")) //FIXME: ~~ operator doesn't work, should use SwifQL lib instead
             return try fq.execute(on: conn, andDecode: Room.self)
         }
     }

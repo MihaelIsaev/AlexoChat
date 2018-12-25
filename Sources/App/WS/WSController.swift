@@ -8,7 +8,7 @@ class WSController: WSBindController {
         guard let user: User = try? client.req.requireAuthenticated() else { print("user not authenticated"); return }
         _ = client.req.requestPooledConnection(to: .psql).flatMap { conn -> Future<Void> in
             let fq = FQL().select(all: Room.self).from(Room.self)
-            fq.where(\Room.deletedAt == nil && \Room.members ~~ [user.id!]) //FIXME: ~~ operator doesn't work, should use SwifQL lib instead
+            fq.where(\Room.deletedAt == nil && FQWhere("members @> ARRAY['\(user.id!.uuidString)']::uuid[]")) //FIXME: ~~ operator doesn't work, should use SwifQL lib instead
             return try fq.execute(on: conn, andDecode: Room.self).map { rooms in
                 var channels = rooms.compactMap { $0.id?.uuidString }
                 channels.append(user.id!.uuidString)
