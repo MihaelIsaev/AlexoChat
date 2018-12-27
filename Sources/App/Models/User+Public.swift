@@ -1,7 +1,7 @@
 import Vapor
 
 extension User {
-    final class Public: Content {
+    struct Public: Content {
         var id: UUID?
         var email, nickname: String
         var isAdmin: Bool = false
