@@ -8,6 +8,7 @@ extension RoomController {
         let user = try req.requireAuthenticated(User.self)
         guard let userId = user.id else { throw Abort(.internalServerError) }
         return req.requestPooledConnection(to: .psql).flatMap { conn in
+            defer { try? req.releasePooledConnection(conn, to: .psql) }
             let fq = FQL()
             fq.select(all: Room.self)
             fq.from(Room.self)
