@@ -2,6 +2,7 @@ import Vapor
 
 extension AuthController {
     struct AuthResponse: Content {
+        var id: UUID?
         var token, nickname: String
         var isAdmin: Bool
     }
@@ -10,7 +11,7 @@ extension AuthController {
         let user = try req.requireAuthenticated(User.self)
         let token = try Token.generate(for: user)
         return token.save(on: req).map { token in
-            return AuthResponse(token: token.token, nickname: user.nickname, isAdmin: user.isAdmin == true)
+            return AuthResponse(id: user.id, token: token.token, nickname: user.nickname, isAdmin: user.isAdmin == true)
         }
     }
 }
