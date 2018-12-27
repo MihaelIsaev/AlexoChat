@@ -9,7 +9,7 @@ final class User: Content {
     
     var id: UUID?
     var email, password, nickname: String
-    var isAdmin: Bool = false
+    var isAdmin: Bool? = false
     var createdAt, updatedAt, deletedAt: Date?
     
     init(id: User.ID? = nil, email: String, password: String, nickname: String, isAdmin: Bool) {
@@ -45,7 +45,7 @@ extension User: SessionAuthenticatable {}
 
 extension User {
     func convertToPublic() -> User.Public {
-        return User.Public(id: id, email: email, nickname: nickname)
+        return User.Public(self)
     }
 }
 
