@@ -9,7 +9,7 @@ extension MessageController {
         var text: String
     }
     
-    func sendToGroup(_ req: Request, payload: SendGroupPayload) throws -> Future<Message> {
+    func sendToGroup(_ req: Request, payload: SendGroupPayload) throws -> Future<Message.Public> {
         let user = try req.requireAuthenticated(User.self)
         guard let userId = user.id else { throw Abort(.internalServerError) }
         return Room.query(on: req).filter(\.id == payload.roomId).first().unwrap(or: Abort(.notFound)).flatMap { room in
@@ -20,7 +20,7 @@ extension MessageController {
                                                    MessagePayload(type: .group, fromUser: User.Public(user), room: room, text: message.text),
                                                    to: room.id!.uuidString,
                                                    on: req).map {
-                    return message
+                    return Message.Public(message, sender: user)
                 }
             }
         }
