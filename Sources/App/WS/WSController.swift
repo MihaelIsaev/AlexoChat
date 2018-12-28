@@ -16,7 +16,7 @@ class WSController: WSBindController {
             }
         }.catchMap { error in
             print("subscribe error: \(error)")
-        }.always {
+        }.do {
             print("connected user subscribed")
         }
     }
