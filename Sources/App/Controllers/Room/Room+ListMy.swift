@@ -13,7 +13,7 @@ extension RoomController {
             let fq = FQL()
             fq.select(all: Room.self)
             fq.from(Room.self)
-            fq.where(\Room.deletedAt == nil && FQWhere("members @> ARRAY['\(userId.uuidString)']::uuid[]")) //FIXME: ~~ operator doesn't work, should use SwifQL lib instead
+            fq.where(\Room.deletedAt == nil && (\Room.type == .open || FQWhere("members @> ARRAY['\(userId.uuidString)']::uuid[]"))) //FIXME: ~~ operator doesn't work, should use SwifQL lib instead
             fq.orderBy(.asc(\Room.name))
             fq.limit(limit)
             fq.offset(offset)
