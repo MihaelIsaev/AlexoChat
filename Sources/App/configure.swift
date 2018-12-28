@@ -24,7 +24,7 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     let database = PostgreSQLDatabase(config: PostgreSQLDatabaseConfig())
     var databaseConfig = DatabasesConfig()
     databaseConfig.add(database: database, as: .psql)
-    databaseConfig.enableLogging(on: .psql)
+    //databaseConfig.enableLogging(on: .psql)
     services.register(databaseConfig)
     
     //By default here only 1 opened connection and that's it!
