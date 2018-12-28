@@ -19,6 +19,7 @@ extension MessageController {
                     .where(\Message.roomId == room.id)
                     .join(.left, User.self, where: \Message.senderId == \User.id)
                     .limit(limit)
+                    .orderBy(.desc(\Message.createdAt))
                     .offset(offset)
                     .execute(on: conn)
                     .decode(Message.Public.self)
