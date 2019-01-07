@@ -19,6 +19,9 @@ class WSController: WSBindController {
         }.do {
             print("connected user subscribed")
         }
+        
+        // Binding to events
+        bind(.typing, typing)
     }
     override func onClose(_ client: WSClient) {}
 }
