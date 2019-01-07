@@ -10,5 +10,6 @@ final class RoomController {
         roomsGroup.get(use: listAll)
         roomsGroup.get("my", use: listMy)
         roomsGroup.get(String.parameter, use: search)
+        roomsGroup.post(Room.parameter, use: addImage)
     }
 }
