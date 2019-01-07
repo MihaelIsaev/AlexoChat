@@ -3,7 +3,7 @@ import Vapor
 import FluentQuery
 
 extension RoomController {
-    func listMy(_ req: Request) throws -> Future<[Room]> {
+    func listMy(_ req: Request) throws -> Future<[Room.Public]> {
         let user = try req.requireAuthenticated(User.self)
         let limit = (try? req.query.get(Int.self, at: "limit")) ?? 20
         let offset = (try? req.query.get(Int.self, at: "offset")) ?? 0
@@ -17,7 +17,9 @@ extension RoomController {
             fq.orderBy(.asc(\Room.name))
             fq.limit(limit)
             fq.offset(offset)
-            return try fq.execute(on: conn, andDecode: Room.self)
+            return try fq.execute(on: conn, andDecode: Room.self).map {
+                return $0.map { $0.convertToPublic() }
+            }
         }
     }
 }

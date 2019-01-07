@@ -33,6 +33,11 @@ extension Room: Migration {
     }
 }
 extension Room {
+    func convertToPublic() -> Room.Public {
+        return Room.Public(self)
+    }
+}
+extension Room {
     func saveImage(data: Data) throws {
         guard let id = id else { throw Abort(.internalServerError, reason: "Unable to save image cause room's id is nil") }
         let workDir = DirectoryConfig.detect().workDir

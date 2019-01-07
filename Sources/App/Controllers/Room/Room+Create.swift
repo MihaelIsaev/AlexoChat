@@ -8,9 +8,17 @@ extension RoomController {
         var shared: Bool
     }
     
-    func create(_ req: Request, payload: CreateRequest) throws -> Future<Room> {
+    func create(_ req: Request, payload: CreateRequest) throws -> Future<Room.Public> {
         let user = try req.requireAuthenticated(User.self)
         guard let userId = user.id else { throw Abort(.internalServerError) }
-        return Room(name: payload.name, type: payload.shared ? .open : .closed, members: [userId], owners: [userId]).create(on: req)
+        let room = Room(name: payload.name,
+                                  type: payload.shared ? .open : .closed,
+                                  members: [userId],
+                                  owners: [userId])
+        return req.transaction(on: .psql) { conn in
+            return room.create(on: conn).map { room in
+                return room.convertToPublic()
+            }
+        }
     }
 }

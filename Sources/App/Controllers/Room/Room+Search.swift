@@ -3,7 +3,7 @@ import Vapor
 import FluentQuery
 
 extension RoomController {
-    func search(_ req: Request) throws -> Future<[Room]> {
+    func search(_ req: Request) throws -> Future<[Room.Public]> {
         let query = try req.parameters.next(String.self)
         let user = try req.requireAuthenticated(User.self)
         guard let userId = user.id else { throw Abort(.internalServerError) }
@@ -13,7 +13,9 @@ extension RoomController {
             fq.select(all: Room.self)
             fq.from(Room.self)
             fq.where(\Room.deletedAt == nil && FQWhere("members @> ARRAY['\(userId.uuidString)']::uuid[]") && \Room.name %% query) //FIXME: ~~ operator doesn't work, should use SwifQL lib instead
-            return try fq.execute(on: conn, andDecode: Room.self)
+            return try fq.execute(on: conn, andDecode: Room.self).map {
+                return $0.map { $0.convertToPublic() }
+            }
         }
     }
 }
