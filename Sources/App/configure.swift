@@ -48,4 +48,13 @@ public func configure(_ config: inout Config, _ env: inout Environment, _ servic
     let ws = WS(at: "ws", protectedBy: [tokenAuthMiddleware, guardAuthMiddleware], delegate: WSController())
     ws.logger.level = .debug
     services.register(ws, as: WebSocketServer.self)
+    
+    // Check and create project folders if needed
+    let workDir = DirectoryConfig.detect().workDir
+    let publicDir = workDir.appending("/Public")
+    let dirPath = publicDir.appending("/Rooms/Images")
+    var isDir : ObjCBool = true
+    if !FileManager.default.fileExists(atPath: dirPath, isDirectory: &isDir) {
+        try FileManager.default.createDirectory(atPath: dirPath, withIntermediateDirectories: true)
+    }
 }
