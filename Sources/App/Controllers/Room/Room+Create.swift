@@ -5,6 +5,7 @@ import FluentSQL
 extension RoomController {
     struct CreateRequest: Content {
         var name: String
+        var image: File?
         var shared: Bool
     }
     
@@ -17,6 +18,9 @@ extension RoomController {
                                   owners: [userId])
         return req.transaction(on: .psql) { conn in
             return room.create(on: conn).map { room in
+                if let image = payload.image {
+                    try room.saveImage(data: image.data)
+                }
                 return room.convertToPublic()
             }
         }
