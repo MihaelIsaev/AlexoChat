@@ -1,3 +1,4 @@
+import Foundation
 import Vapor
 import FluentPostgreSQL
 
@@ -29,5 +30,14 @@ extension Room: Migration {
         return Database.create(self, on: connection) { builder in
             try addProperties(to: builder)
         }
+    }
+}
+extension Room {
+    func saveImage(data: Data) throws {
+        guard let id = id else { throw Abort(.internalServerError, reason: "Unable to save image cause room's id is nil") }
+        let workDir = DirectoryConfig.detect().workDir
+        let imageFolder = workDir.appending("/Public").appending(Room.Public.imagePath)
+        let filePath = imageFolder.appending(id.uuidString + ".jpg")
+        try data.write(to: URL(fileURLWithPath: filePath))
     }
 }
