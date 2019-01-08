@@ -9,7 +9,7 @@ extension MessageController {
         let limit = (try? req.query.get(Int.self, at: "limit")) ?? 20
         let offset = (try? req.query.get(Int.self, at: "offset")) ?? 0
         return try req.parameters.next(Room.self).flatMap { room in
-            guard room.members.contains(user.id!) || user.isAdmin == true else { throw Abort(.forbidden) }
+            guard room.type == .open || user.isAdmin == true || room.members.contains(user.id!) else { throw Abort(.forbidden) }
             return req.requestPooledConnection(to: .psql).flatMap { conn in
                 defer { try? req.releasePooledConnection(conn, to: .psql) }
                 return try FQL()
